@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semences</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='Logo.png') }}"
+      type="image/png"
+    />
+    <style>
+      .category-image {
+        width: 100%;
+        max-width: 300px; /* Taille maximale uniforme pour toutes les images */
+        height: auto;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+      .category {
+        margin-bottom: 20px;
+      }
+      .seed-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      .seed-list li {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+        margin-bottom: 5px;
+      }
+      .seed-info {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #e6f2e6;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header section -->
+    <header>
+      <img
+        src="{{ url_for('static', filename='Logo.png') }}"
+        alt="Logo"
+        class="logo"
+      />
+      <nav>
+        <a href="{{ url_for('index') }}">ACCUEIL</a>
+        <a href="{{ url_for('chatbot') }}"
+          >PREDIRE UN RENDEMENT & GENERER UN ITINERAIRE TECHNIQUE</a
+        >
+        <a href="https://agriculture.gouv.sn/" target="_blank"
+          >L'AGRICULTURE AU SENEGAL</a
+        >
+      </nav>
+    </header>
+
+    <!-- Seed Categories Section -->
+    <div id="seeds-container">
+        <h1>Catégories de Semences</h1>
+      
+        <!-- Flower and Wild Grasses Category -->
+        <div class="category">
+          <img
+            src="{{ url_for('static', filename='fleurs.jpg') }}"
+            alt="Fleurs et Graminées Sauvages"
+            class="category-image"
+          />
+          <button onclick="toggleList('flowers')">Fleurs et Graminées Sauvages</button>
+          <ul id="flowers" class="seed-list" style="display: none">
+            <li onclick="getSeedInfo('AGASTACHE')">AGASTACHE</li>
+            <li onclick="getSeedInfo('AGERATUM')">AGERATUM</li>
+            <li onclick="getSeedInfo('ALTHAEA (MARSHMALLOW)')">ALTHAEA (MARSHMALLOW)</li>
+            <!-- Ajouter les autres semences ici -->
+          </ul>
+        </div>
+      
+        <!-- Fruits Category -->
+        <div class="category">
+          <img
+            src="{{ url_for('static', filename='fruits.jpg') }}"
+            alt="Fruits"
+            class="category-image"
+          />
+          <button onclick="toggleList('fruits')">Fruits</button>
+          <ul id="fruits" class="seed-list" style="display: none">
+            <li onclick="getSeedInfo('Airelles')">Airelles</li>
+            <li onclick="getSeedInfo('CAPE GOOSEBERRY')">CAPE GOOSEBERRY</li>
+            <li onclick="getSeedInfo('Canary Melon')">Canary Melon</li>
+            <!-- Ajouter les autres semences ici -->
+          </ul>
+        </div>
+      
+        <!-- Herbs Category -->
+        <div class="category">
+          <img
+            src="{{ url_for('static', filename='herbes.jpg') }}"
+            alt="Fines Herbes"
+            class="category-image"
+          />
+          <button onclick="toggleList('herbs')">Fines Herbes et Plantes Médicinales</button>
+          <ul id="herbs" class="seed-list" style="display: none">
+            <li onclick="getSeedInfo('AGASTACHE')">AGASTACHE</li>
+            <li onclick="getSeedInfo('ANISE')">ANISE</li>
+            <li onclick="getSeedInfo('ARNICA')">ARNICA</li>
+            <!-- Ajouter les autres semences ici -->
+          </ul>
+        </div>
+      </div>
+      
+
+      <!-- Display Seed Description -->
+      <div id="seed-info" class="seed-info">
+        <h2>Description de la Semence</h2>
+        <p id="seed-description">
+          Sélectionnez une semence pour obtenir une description.
+        </p>
+      </div>
+    </div>
+
+    <!-- JavaScript for handling category toggle and OpenAI request -->
+    <script>
+      function toggleList(categoryId) {
+        const list = document.getElementById(categoryId);
+        list.style.display = list.style.display === "none" ? "block" : "none";
+      }
+
+      function getSeedInfo(seedName) {
+        document.getElementById("seed-description").innerText =
+          "Chargement de la description...";
+
+        fetch("/get_seed_info", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ seed: seedName }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("seed-description").innerText = data.info;
+          })
+          .catch((error) => {
+            console.error(
+              "Erreur lors de la récupération des informations de la semence:",
+              error
+            );
+            document.getElementById("seed-description").innerText =
+              "Impossible de récupérer la description.";
+          });
+      }
+    </script>
+  </body>
+</html>

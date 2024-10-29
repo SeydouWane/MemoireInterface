@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div class="scrolling-text">
+  <link rel="icon" href="{{ url_for('static', filename='Logo.png') }}" type="image/x-icon" /> <!-- Lien pour le favicon -->
+
+    <p>Dalal ak Jàmm rekk - Bonjour et bienvenue ! - Hello and welcome!</p>
+</div>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interface Agriculture</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  <!-- Favicon -->
+  <link rel="icon" href="{{ url_for('static', filename='Logo.png') }}" type="image/png" />
+</head>
+  </head>
+  <body>
+    <header>
+      <img
+        src="{{ url_for('static', filename='Logo.png') }}"
+        alt="Logo"
+        class="logo"
+      />
+      <nav>
+        <a href="{{ url_for('index') }}">ACCUEIL</a>
+        <a href="{{ url_for('chatbot') }}"
+          >PREDIRE UN RENDEMENT & GENERER UN ITINERAIRE TECHNIQUE</a
+        >
+        <a href="{{ url_for('agriculture') }}">L'AGRICULTURE AU SENEGAL</a>
+
+      </nav>
+    </header>
+
+    <main>
+      <aside>
+        <a href="{{ url_for('meteo') }}"><button>METEO</button></a>
+        <a href="{{ url_for('semences_page') }}"><button>SEMENCES</button></a>
+        <a href="https://agriculture.gouv.sn/" target="_blank"><button>PESTICIDES</button></a>
+        <a href="https://agriculture.gouv.sn/" target="_blank"><button>AGRONOMES</button></a>
+      </aside>
+
+
+
+      <section class="content">
+        <div class="content-wrapper">
+          <img
+            src="{{ url_for('static', filename='technologies-in-agriculture-fr.png') }}"
+            alt="Agriculture Image"
+            class="content-image"
+          />
+          <div class="content-text">
+            <h2>Technologies Agricoles Et Méthodes Avancées D’Agriculture</h2>
+            <p>
+              L'évolution de l’agriculture moderne progresse dans diverses
+              directions simultanément. Cependant, son objectif principal est
+              d'utiliser les technologies agricoles pour augmenter les rendements
+              des cultures grâce à une meilleure planification et à une gestion plus
+              intelligente. En agriculture, on appelle habituellement rendement la quantité de produit récoltée sur l'unité de surface cultivée. Il est souvent exprimé en quintaux métriques (1 q = 100 kg) par hectare pour les grains, ou en tonnes par hectare pour les produits riches en eau (racines et tubercules, fruits...). Ce terme, consacré par l'usage, est impropre, puisqu'un rendement est une grandeur sans dimensions, le numérateur et le dénominateur ayant la même unité. Le vrai rendement serait donc le rapport entre la quantité récoltée et la quantité de semence, qui a été utilisé pendant des millénaires (« un rendement de 5 pour 1 », disait-on par exemple). Ou bien un rendement énergétique, rapport entre la quantité de calories produites et celle dépensée pour la produire.
+            </p>
+              <h2>Itinéraire Technique</h2>
+              <p> L’adaptation de l’itinéraire technique fait partie des leviers permettant de réduire la sensibilité des cultures aux conséquences du dérèglement climatique. En tant qu’organisme de recherche appliquée, Arvalis-Institut du végétal acquiert et diffuse des références afin de faire face aux risques. La gestion de l’eau et des sols, une possible remontée des zones de production vers le nord et des difficultés potentielles de production dans le Sud pour certaines cultures, une fragilisation de certains systèmes… L’agriculture doit relever de nombreux défis face au changement climatique. Afin de réduire la sensibilité des cultures aux conséquences de ce dérèglement du climat, l’une des solutions consiste à adapter les itinéraires techniques. « L’itinéraire technique est un enchaînement logique et ordonné d’interventions techniques culturales permettant de tirer le maximum des potentialités du milieu vis-à-vis d’une production donnée, du semis la récolte. Chaque intervention va dépendre à la fois de ce que l’agriculteur a opéré précédemment et de l’état du milieu (de la parcelle) au moment où il intervient, explique François Laurent, directeur recherche et développement chez Arvalis-Institut du végétal. Le changement climatique entraîne des perturbations (stress thermiques, déficit hydrique ou excès d’eau…) qui nécessitent d’adapter les itinéraires techniques pour maintenir les performances et la rentabilité des systèmes de production. »
+            </p>
+          </div>
+          <div class="content-video">
+            <iframe
+              src="https://www.youtube.com/embed/jvao3jcDlmQ"
+              title="Comment estimer ses rendements de maïs"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              class="video-iframe"
+            ></iframe>
+          </div>
+        </div>
+      </section>
+      
+    </main>
+  </body>
+
+  <footer>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/votreprofil" target="_blank">
+        <img src="{{ url_for('static', filename='.png') }}" alt="Facebook">
+      </a>
+      <a href="https://www.instagram.com/votreprofil" target="_blank">
+        <img src="{{ url_for('static', filename='.jpg') }}" alt="Instagram">
+      </a>
+      <a href="https://www.linkedin.com/in/papa-seydou-wane-37abaa1a1/" target="_blank">
+        <img src="{{ url_for('static', filename='.png') }}" alt="LinkedIn">
+      </a>
+      <a href="https://x.com/SeyDouxWane" target="_blank">
+        <img src="{{ url_for('static', filename='.png') }}" alt="Twitter">
+      </a>
+    </div>
+    <p>@copyright_WANEMemoire2024</p>
+  </footer>
+  
+</html>

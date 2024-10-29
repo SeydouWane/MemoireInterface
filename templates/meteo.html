@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Météo</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='Logo.png') }}"
+      type="image/png"
+    />
+  </head>
+  <body>
+    <header>
+      <img
+        src="{{ url_for('static', filename='Logo.png') }}"
+        alt="Logo"
+        class="logo"
+      />
+      <nav>
+        <a href="{{ url_for('index') }}">ACCUEIL</a>
+        <a href="{{ url_for('chatbot') }}"
+          >PREDIRE UN RENDEMENT & GENERER UN ITINERAIRE TECHNIQUE</a
+        >
+        <a href="https://agriculture.gouv.sn/" target="_blank"
+          >L'AGRICULTURE AU SENEGAL</a
+        >
+      </nav>
+    </header>
+
+    <div id="weather-container">
+      <h1>Météo</h1>
+      <input
+        type="text"
+        id="city-input"
+        placeholder="Entrez le nom de la ville"
+      />
+      <button onclick="getWeather()">Obtenir la météo</button>
+      <div id="weather-result"></div>
+    </div>
+
+    <script>
+      function getWeather() {
+        const cityName = document.getElementById("city-input").value;
+        const apiToken =
+          "8fdf1ce8c61c49e3ca29b057814abc359d9af9825ea509c172823e244bacfd7a";
+
+        fetch(
+          `https://api.meteo-concept.com/api/location/cities?token=${apiToken}&search=${cityName}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.cities && data.cities.length > 0) {
+              const inseeCode = data.cities[0].insee;
+
+              fetch(
+                `https://api.meteo-concept.com/api/forecast/daily?token=${apiToken}&insee=${inseeCode}`
+              )
+                .then((response) => response.json())
+                .then((weatherData) => {
+                  const weather = weatherData.forecast[0];
+                  document.getElementById("weather-result").innerHTML = `
+                    <h2>Météo pour ${data.cities[0].name}</h2>
+                    <p>Température minimale : ${weather.tmin} °C</p>
+                    <p>Température maximale : ${weather.tmax} °C</p>
+                    <p>Conditions : ${weather.weather}</p>
+                  `;
+                })
+                .catch((error) => {
+                  console.error("Weather fetch error:", error);
+                  document.getElementById("weather-result").innerText =
+                    "Erreur lors de la récupération des prévisions.";
+                });
+            } else {
+              document.getElementById("weather-result").innerText =
+                "Ville introuvable, récupération via OpenAI...";
+              getOpenAIWeatherInfo(cityName);
+            }
+          })
+          .catch((error) => {
+            console.error("City fetch error:", error);
+            document.getElementById("weather-result").innerText =
+              "Erreur lors de la recherche de la ville.";
+          });
+      }
+
+      function getOpenAIWeatherInfo(cityName) {
+        fetch("/get_weather_info", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ city: cityName }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("weather-result").innerHTML = `
+            <h2>Météo approximative pour ${cityName}</h2>
+            <p>${data.info}</p>
+          `;
+          })
+          .catch((error) => {
+            console.error("OpenAI fetch error:", error);
+            document.getElementById("weather-result").innerText =
+              "Impossible de récupérer les informations météo.";
+          });
+      }
+    </script>
+  </body>
+</html>

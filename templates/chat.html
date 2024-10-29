@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Agricole</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #8ca77a;
+        color: #333;
+        background-image: url("{{ url_for('static', filename='background.jpg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+      }
+    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Agricole</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='Logo.png') }}"
+      type="image/png"
+    />
+  </head>
+  <body>
+    <header>
+      <img
+        src="{{ url_for('static', filename='Logo.png') }}"
+        alt="Logo"
+        class="logo"
+      />
+      <nav>
+        <a href="{{ url_for('index') }}">ACCUEIL</a>
+        <a href="{{ url_for('chatbot') }}"
+          >PREDIRE UN RENDEMENT & GENERER UN ITINERAIRE TECHNIQUE</a
+        >
+        <a href="https://agriculture.gouv.sn/" target="_blank"
+          >L'AGRICULTURE AU SENEGAL</a
+        >
+      </nav>
+    </header>
+
+    <div id="chat-container">
+      <h1>Chatbot Agricole</h1>
+      <div id="chat-box"></div>
+
+      <div id="input-container">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Tapez votre message ici..."
+        />
+        <button onclick="sendMessage()">Envoyer</button>
+        <button onclick="startRecording()">
+          🎙️ Enregistrer un message audio
+        </button>
+      </div>
+
+      <div id="date-container" style="display: none">
+        <label for="start-date"
+          >Sélectionnez la date de début (JJ/MM/AAAA):</label
+        >
+        <input type="date" id="start-date" />
+        <button onclick="sendDate()">Confirmer la date</button>
+      </div>
+    </div>
+
+    <script>
+      let mediaRecorder;
+      let audioChunks = [];
+
+      // Fonction pour démarrer l'enregistrement audio
+      async function startRecording() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.start();
+          audioChunks = [];
+
+          mediaRecorder.addEventListener("dataavailable", (event) => {
+            audioChunks.push(event.data);
+          });
+
+          mediaRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+            const formData = new FormData();
+            formData.append("audio", audioBlob, "audio.wav");
+
+            fetch("/transcribe", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                displayMessage("Vous", data.transcription);
+                processUserMessage(data.transcription);
+              })
+              .catch((error) => {
+                console.error("Erreur de transcription:", error);
+              });
+          });
+
+          setTimeout(() => {
+            mediaRecorder.stop();
+          }, 5000);
+        } catch (err) {
+          console.error("Erreur d'accès au micro:", err);
+        }
+      }
+
+      function processUserMessage(message) {
+        displayMessage("Vous", message);
+
+        fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: message }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            displayMessage("Bot", data.message);
+
+            // Check if the bot asks for the start date
+            if (
+              data.message.includes(
+                "Veuillez entrer la date souhaitée pour commencer la culture"
+              )
+            ) {
+              document.getElementById("date-container").style.display = "block";
+              document.getElementById("input-container").style.display = "none";
+            } else {
+              document.getElementById("date-container").style.display = "none";
+              document.getElementById("input-container").style.display =
+                "block";
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur lors de l'envoi du message:", error);
+          });
+      }
+
+      function sendMessage() {
+        const userInput = document.getElementById("user-input").value;
+        processUserMessage(userInput);
+        document.getElementById("user-input").value = ""; // Clear input field
+      }
+
+      function sendDate() {
+        const dateInput = document.getElementById("start-date").value;
+        if (dateInput) {
+          const formattedDate = formatDate(dateInput); // Format to DD/MM/YYYY
+          processUserMessage(formattedDate);
+          document.getElementById("date-container").style.display = "none";
+          document.getElementById("input-container").style.display = "block";
+        }
+      }
+
+      function displayMessage(sender, message) {
+        const chatBox = document.getElementById("chat-box");
+        chatBox.innerHTML += `<p><strong>${sender}:</strong> ${message}</p>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      // Function to format date to DD/MM/YYYY
+      function formatDate(dateString) {
+        const [year, month, day] = dateString.split("-");
+        return `${day}/${month}/${year}`;
+      }
+    </script>
+  </body>
+</html>

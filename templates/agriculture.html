@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>L'Agriculture au Sénégal</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <img
+        src="{{ url_for('static', filename='Logo.png') }}"
+        alt="Logo"
+        class="logo"
+      />
+      <nav>
+        <a href="{{ url_for('index') }}">ACCUEIL</a>
+        <a href="{{ url_for('chatbot') }}"
+          >PREDIRE UN RENDEMENT & GENERER UN ITINERAIRE TECHNIQUE</a
+        >
+        <a href="{{ url_for('agriculture') }}">L'AGRICULTURE AU SENEGAL</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="articles-section">
+        <h1 class="articles-title">Articles sur l'Agriculture au Sénégal</h1>
+        <div class="articles-container">
+          {% for article in articles %}
+          <div class="article">
+            <!-- Logo du site -->
+            {% if "senego.com" in article.site_url %}
+            <img
+              src="{{ url_for('static', filename='senego.png') }}"
+              alt="Logo Senego"
+              class="site-logo"
+            />
+            {% elif "dakaractu.com" in article.site_url %}
+            <img
+              src="{{ url_for('static', filename='dakaractu.png') }}"
+              alt="Logo DakarActu"
+              class="site-logo"
+            />
+            {% else %}
+            <img
+              src="{{ url_for('static', filename='default.png') }}"
+              alt="Logo"
+              class="site-logo"
+            />
+            {% endif %}
+
+            <!-- Informations de l'article -->
+            <h2>
+              {{ article.title if article.title else "Titre non disponible" }}
+            </h2>
+            <p>
+              <strong>Auteur :</strong> {{ article.auteur if article.auteur else
+              "Auteur inconnu" }}
+            </p>
+            <p>
+              <strong>Date :</strong> {{ article.date if article.date else "Date
+              non disponible" }}
+            </p>
+            <p>
+              {{ article.contenu[:200] if article.contenu else "Contenu non
+              disponible" }}...
+            </p>
+            <!-- Affiche un extrait de 200 caractères -->
+
+            <!-- Lien vers l'article complet -->
+            <a href="{{ article.article_url }}" target="_blank"
+              >Lire l'article complet</a
+            >
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
